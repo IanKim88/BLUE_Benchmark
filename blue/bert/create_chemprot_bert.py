@@ -46,19 +46,22 @@ def replace_text(text, offset, ann1, ann2):
         after = text[end:]
         return before + '@CHEM-GENE$' + after
 
-    if ann1_start > ann2_start:
-        ann1_start, ann1_end, ann2_start, ann2_end = ann2_start, ann2_end, ann1_start, ann1_end
-
     before = text[:ann1_start]
     middle = text[ann1_end:ann2_start]
     after = text[ann2_end:]
-
+    
+    ann1_type = ann1['type']
+    ann2_type = ann2['type']
+    if ann1_start > ann2_start:
+        ann1_start, ann1_end, ann1_type, ann2_start, ann2_end, ann2_type \
+            = ann2_start, ann2_end, ann2_type, ann1_start, ann1_end, ann1_type
+        
     if ann1['type'] in ('GENE-N', 'GENE-Y'):
         ann1['type'] = 'GENE'
     if ann2['type'] in ('GENE-N', 'GENE-Y'):
         ann2['type'] = 'GENE'
 
-    return before + f'@{ann1["type"]}$' + middle + f'@{ann2["type"]}$' + after
+    return before + f'@{ann1_type}$' + middle + f'@{ann2_type}$' + after
 
 
 def print_rel_debug(sentences, entities, id1, id2):
